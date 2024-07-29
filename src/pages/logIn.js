@@ -44,8 +44,8 @@ export function LogIn() {
                         console.log(res[0].pass)
                         console.log(res[0].pass == account.pass)
                         if ((res[0].user == account.user) && (res[0].pass == account.pass)) {
-                            document.cookie = "user="+account.user+"; path=/menu"
-                            document.cookie = "pass="+account.pass+"; path=/menu"
+                            document.cookie = "user="+account.user
+                            document.cookie = "pass="+account.pass
                             navigate("/menu")
                         } else {
                             setSuccess("Incorrect username or password")

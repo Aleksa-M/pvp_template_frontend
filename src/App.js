@@ -8,9 +8,10 @@ import { AccountList } from './pages/accountList';
 import { Home } from './pages/home';
 import { io } from 'socket.io-client';
 import { useState } from 'react';
-import { useEffect } from 'react';
 
 function App() {
+
+  
 
   return (
     <Routes>
