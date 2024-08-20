@@ -4,7 +4,7 @@ import { PlayerMatch } from './pages/playerMatch';
 import { Menu } from './pages/menu';
 import { LogIn } from './pages/logIn';
 import { SignUp } from './pages/signUp';
-import { AccountList } from './pages/accountList';
+import { AccountList } from './pages/accountList';  
 import { Home } from './pages/home';
 import { io } from 'socket.io-client';
 import { useState } from 'react';
