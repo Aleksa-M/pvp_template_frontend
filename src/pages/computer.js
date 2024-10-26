@@ -1,9 +1,10 @@
-import { Link } from "react-router-dom";
+import { useEffect, useState } from "react";
 
 export function Computer() {
+
     return (
         <div>
-            Computer
+            Computer page
         </div>
     );
 }

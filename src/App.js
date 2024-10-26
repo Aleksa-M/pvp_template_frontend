@@ -1,13 +1,12 @@
 import { Route, Routes } from 'react-router-dom';
-import { Computer } from './pages/computer';
-import { PlayerMatch } from './pages/playerMatch';
-import { Menu } from './pages/menu';
-import { LogIn } from './pages/logIn';
-import { SignUp } from './pages/signUp';
 import { AccountList } from './pages/accountList';  
+import { Computer } from './pages/computer';
 import { Home } from './pages/home';
-import { io } from 'socket.io-client';
-import { useState } from 'react';
+import { LogIn } from './pages/logIn';
+import { Menu } from './pages/menu';
+import { PlayerMatch } from './pages/playerMatch';
+import { ProfilePage } from './pages/profilePage';
+import { SignUp } from './pages/signUp';
 
 function App() {
 
@@ -22,6 +21,7 @@ function App() {
       <Route path="/menu" element={<Menu />} />
       <Route path="/computer" element={<Computer />} />
       <Route path="/player-match" element={<PlayerMatch />} />
+      <Route path="/profile-page" element={<ProfilePage />} />
     </Routes>
   );
 }

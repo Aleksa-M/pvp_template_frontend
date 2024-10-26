@@ -23,6 +23,8 @@ export function SignUp() {
             const data = {
                 "username": account.user,
                 "password": account.pass,
+                "wins": 0,
+                "losses": 0,
             }
             const header = {
                 "Content-Type": "application/json",

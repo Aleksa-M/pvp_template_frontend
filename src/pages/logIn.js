@@ -1,9 +1,10 @@
-import React from 'react';
-import axios from 'axios';
-import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import cookieParser from '../cookieParser.js';
 
-export function LogIn() {
+export function LogIn() {   
+
+    console.log(document.cookie)    
 
     const [success,setSuccess] = useState("Enter account details")
     const [account,setAccount] = useState(
@@ -30,7 +31,7 @@ export function LogIn() {
             const header = {
                 "Content-Type": "application/json",
             }
-            fetch('http://localhost:8008/log-in', {
+            fetch('http://localhost:8008/fetch-account', {
                 method: 'POST',
                 body: JSON.stringify(data),
                 headers: header
@@ -64,6 +65,12 @@ export function LogIn() {
     }
     
     console.log(account)
+
+    useEffect(() => {
+        if (cookieParser(document.cookie).user != "") {
+            navigate("/menu")
+        }
+    })
 
     return (
         <div className="form">
