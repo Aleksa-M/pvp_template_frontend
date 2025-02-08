@@ -1,47 +1,64 @@
-import { Link, useNavigate } from "react-router-dom";
-import { useState } from 'react';
-import { useEffect } from 'react';
-import { io } from 'socket.io-client';
+import { useNavigate } from "react-router-dom";
+import { useState, useEffect, useRef } from 'react';
 import cookieParser from '../cookieParser';
- 
-const socket = io.connect("http://localhost:3001");
 
 export function PlayerMatch() {
+    const connection = useRef(null)                     // socket
+    const navigate = useNavigate();                     // send them back to log-in
+    const [srvrMsg, setSrvrMsg] = useState("");         // msg to be sent
+    const [localMsg, setLocalMsg] = useState("");       // global msg that should be displayed to all users
 
-    const [msg, setMessage] = useState({ text: "" })
+    // Socket hook
+    useEffect(() => {
+        console.log("start")
+        // Socket object
+        const socket = new WebSocket("ws://localhost:3001?user="+cookieParser(document.cookie).user) // url must be the same as app, but with ws protocol instead of http
 
-    const navigate = useNavigate();
+        // Socket listen for connection opened
+        socket.addEventListener("open", () => {
+            console.log("skib")
+        })
+
+        // Socket listen for messages
+        socket.addEventListener("message", (event) => {
+            console.log("Message recieved: ", event.data)
+            setSrvrMsg(event.data)
+        })
+
+        // Socket listen for close
+
+        connection.current = socket
+
+        //return () => (connection.current).close()
+    }, [connection])
+
+    // take user back to log-in if they are not logged in
     useEffect(() => {
         if (cookieParser(document.cookie).user == "") {
             navigate("/log-in")
         }
-    })
+    }, [])
 
-    const updateMessage = (e) => {
-        setMessage(prev=>({...prev, [e.target.name]: e.target.value}))
+    const handleChange = (e) =>  {
+        setLocalMsg(e.target.value)
     }
 
-    const sendMessage = () => {
-        console.log("sent message function")
-        socket.emit("send_message", { message: msg.text})
+    const sendMessage = (e) => {
+        connection.current.send(localMsg)
+        console.log("sending message: "+localMsg)
     }
-    
-    useEffect(() => {
-        socket.on("receive_message", (data) => {
-            alert(data.message)
-        })  
-    }, [socket]);
-
-    console.log(msg)
 
     return (
         <div>
             Player Match
-            <input 
-                onChange={updateMessage} 
+            <input
+                onChange={handleChange}
                 name="text"
                 placeholder="Message..." />
             <button onClick={sendMessage}>Send</button>
+            <p>local message: {localMsg}</p>
+            <br></br>
+            <p>global message: {srvrMsg}</p>
         </div>
     );
 }

@@ -9,9 +9,6 @@ import { ProfilePage } from './pages/profilePage';
 import { SignUp } from './pages/signUp';
 
 function App() {
-
-  
-
   return (
     <Routes>
       <Route index element={<Home />} />

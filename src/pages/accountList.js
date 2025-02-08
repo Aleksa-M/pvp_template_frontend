@@ -32,7 +32,7 @@ export function AccountList() {
                 {accounts.map((account) => (
                     <div>
                         <h2>id: {account.id} </h2>
-                        <h3>user: {account.user}</h3>
+                        <h3>user: {account.username}</h3>
                         <h3>pass: {account.pass}</h3>
                     </div>
                 ))}

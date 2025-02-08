@@ -6,16 +6,17 @@ export function Menu() {
 
     const navigate = useNavigate();
     
+    // rederict to login if youre not logged in
     useEffect(() => {
         if (cookieParser(document.cookie).user == "") {
             navigate("/log-in")
         }
-    })
+    }, [document.cookie])
 
     const logout = () => {
-        document.cookie = "user="
+        document.cookie = "username="
         document.cookie = "pass="
-        console.log(document.cookie)
+        navigate("/log-in")
     }
     
     return (

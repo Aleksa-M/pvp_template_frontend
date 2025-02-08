@@ -7,7 +7,7 @@ export default function cookieParser(cookie) {
         let property = field[0]
         let value = field[1]
 
-        if (property == "user") {
+        if (property == "username") {
             cookieJSON.user = value
         } else if (property == "pass") {
             cookieJSON.pass = value

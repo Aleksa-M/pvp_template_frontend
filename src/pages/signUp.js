@@ -1,16 +1,12 @@
-import React from 'react';
-import axios from 'axios';
-import { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 export function SignUp() {
 
-    const [account, setAccount] = useState({
-        user:"",
-        pass:""
-    });
-    const [unique, setUnique] = useState(true)
-    const [header, setHeader] = useState("Enter a unique username")
+    const [account, setAccount] = useState({username:"", pass:""});
+    const [state, setState] = useState("typing");
+
+    const controller = new AbortController();
 
     const navigate = useNavigate()
 
@@ -19,77 +15,93 @@ export function SignUp() {
     }
     const handleClick = async e => {
         e.preventDefault()
-        try {
-            const data = {
-                "username": account.user,
-                "password": account.pass,
+        setState("submitting")
+    }
+
+    const checkUnique = async (data) => {
+        // uses find-account GET request to determine uniqueness of chosen username
+        let header = {
+            "Content-Type": "application/json",
+        }
+        let unique = await fetch("http://localhost:8008/find-account", {
+            method: 'POST',
+            body: JSON.stringify(data),
+            headers: header,
+            signal: controller.signal
+        })
+        .then(response => response.json())
+        .then((res) => {
+            if (res.length != 0) {
+                setState("taken")
+                return false
+            }
+        })   
+        .catch((err) => {
+            setState("error")
+            return false
+        })
+        return unique
+    }
+
+    const addAccount = async (data) => {
+        // adds account to database
+        let header = {
+            "Content-Type": "application/json",
+        }
+        await fetch("http://localhost:8008/add-account", {
+            method: 'POST',
+            body: JSON.stringify(data),
+            headers: header
+        })
+        .catch(() => {setState("error")})
+    }
+
+    useEffect(() => {
+        if (state === "submitting") {
+            let data = {
+                "username": account.username,
+                "pass": account.pass,
                 "wins": 0,
                 "losses": 0,
             }
-            const header = {
-                "Content-Type": "application/json",
-            }
 
-            fetch("http://localhost:8008/log-in", {
-                method: 'POST',
-                body: JSON.stringify(data),
-                headers: header
-            }).then(response => response.json())
-                .then((res) => {
-                    try {
-                        console.log(res)
-                        console.log(res[0])
-                        console.log(res[0].user)
-                        console.log(res[0].user == account.user)
-                        console.log(res[0].pass)
-                        console.log(res[0].pass == account.pass)
-                        if (res[0].user == account.user) {
-                            setHeader("User already exists")
-                        }
-                    } catch(err) {
-                        if (res == []) {
-                            setHeader("Weird")
-                        } else {
-                            setHeader("User already exists")
-                        }
-                    }}
-                )   
-            .catch(err => {console.log(err)})
-
-            if (unique) {
-                fetch("http://localhost:8008/sign-up", {
-                    method: 'POST',
-                    body: JSON.stringify(data),
-                    headers: header
-                }).then(
-                    navigate("/menu")
-                )
-                .catch(err => console.log(err))
+            let signUp = async () => {
+                let isUnique = await checkUnique(data);
+                if (!isUnique) return;
+                addAccount(data);
             }
+            signUp()
         }
-        catch(err) {
-            console.log(err)
+        return () => {
+            controller.abort()
         }
-    }
-    console.log(account)
+    }, [state])
+
     return (
         <div className="form">
             <h1>Sign Up</h1>
-            <h2>{header}</h2>
             <input 
                 type="text"
-                placeholder="Username" 
-                onChange={handleChange} name="user"
+                placeholder="Username"
+                disabled={state === "submitting"}
+                onChange={handleChange} name="username"
             />
             <input 
                 type="password" 
-                placeholder="Password" 
+                placeholder="Password"
+                disabled={state === "submitting"}
                 onChange={handleChange} name="pass"
             />
             <button
                 onClick={handleClick}>
                 Submit
             </button>
+            {(state === "typing") && <p>Please create a Username and password. Your Username must be unique.</p>}
+            {(state === "success") && <p>You have successfully created an account!</p>}
+            {(state === "error") && <p>An error has occured, please try again.</p>}
+            {(state === "submitting") && <p>Processing...</p>}
+            {(state === "taken") && <p>There already exists an account with that username</p>}
+
         </div>
     )
 }

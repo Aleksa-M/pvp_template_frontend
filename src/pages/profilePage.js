@@ -14,13 +14,13 @@ export function ProfilePage() {
         const header = {
             "Content-Type": "application/json",
         }
-        fetch('http://localhost:8008/fetch-account', {
+        fetch('http://localhost:8008/find-account', {
             method: 'POST',
             body: JSON.stringify(data),
             headers: header
         }).then(response => response.json())
             .then(res => {
-                setUser(res[0].user)
+                setUser(res[0].username)
                 setWins(res[0].wins)
                 setLosses(res[0].losses)
             })
