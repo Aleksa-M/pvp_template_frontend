@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import cookieParser from '../cookieParser.js';
+import React, { useEffect, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
+import cookieParser from '../cookieParser.js'
 
 export function LogIn() {   
 
@@ -8,30 +8,30 @@ export function LogIn() {
     const [account, setAccount] = useState({username: cookieParser(document.cookie).user, pass: cookieParser(document.cookie).pass});
     const [state, setState] = useState("typing");
 
-    const navigate = useNavigate()
+    const navigate = useNavigate();
 
-    const controller = new AbortController()
+    const controller = new AbortController();
 
     useEffect(() => {
         setAccount({
             username: cookieParser(document.cookie).user,
             pass: cookieParser(document.cookie).pass
-        })
-    }, [])
+        });
+    }, []);
 
     const handleChange = (e) =>  {
-        setAccount(prev=>({...prev, [e.target.name]: e.target.value}))
+        setAccount(prev=>({...prev, [e.target.name]: e.target.value}));
     }
 
     const handleClick = async e => {
-        e.preventDefault()
-        setState("submitting")
+        e.preventDefault();
+        setState("submitting");
     }
 
     const matchAccount = async (data) => {
         let header = {
             "Content-Type": "application/json"
-        }
+        };
         let matched = await fetch('http://localhost:8008/find-account', {
             method: 'POST',
             body: JSON.stringify(data),
@@ -41,45 +41,45 @@ export function LogIn() {
         .then(response => response.json())
         .then(res => {
             if (res == []) {
-                setState("fail")
-                return false
+                setState("fail");
+                return false;
             }
             else if ((res[0].user === account.user) && (res[0].pass == account.pass)) {
-                return true
+                return true;
             } else {
-                setState("fail")
-                return false
+                setState("fail");
+                return false;
             }
         })
         .catch(() => {
-            setState("error")
-            return false
-        })
+            setState("error");
+            return false;
+        });
 
-        return matched
-    }
+        return matched;
+    };
     
     useEffect(() => {
         if (state === "submitting") {
             let data = {
                 "username": account.username,
                 "pass": account.pass
-            }
+            };
             let logIn = async () => {
-                let matched = await matchAccount(data)
-                if (!matched) return
-                document.cookie = "username="+data.username
-                document.cookie = "pass="+data.pass
-                setState("success")
+                let matched = await matchAccount(data);
+                if (!matched) return;
+                document.cookie = "username="+data.username;
+                document.cookie = "pass="+data.pass;
+                setState("success");
             }
-            logIn()
+            logIn();
         } else if (state === "success") {
-            navigate("/menu")
+            navigate("/menu");
         }
         return () => {
-            controller.abort()
+            controller.abort();
         }
-    }, [state])
+    }, [state]);
 
     return (
         <div className="form">

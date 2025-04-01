@@ -1,5 +1,5 @@
-import { useEffect, useState } from "react";
-import cookieParser from '../cookieParser.js';
+import { useEffect, useState } from "react"
+import cookieParser from '../cookieParser.js'
 
 export function ProfilePage() {
 
@@ -10,21 +10,22 @@ export function ProfilePage() {
     useEffect(() => {
         const data = {
             "username": cookieParser(document.cookie).user,
-        }
+        };
         const header = {
             "Content-Type": "application/json",
-        }
+        };
         fetch('http://localhost:8008/find-account', {
             method: 'POST',
             body: JSON.stringify(data),
             headers: header
-        }).then(response => response.json())
-            .then(res => {
-                setUser(res[0].username)
-                setWins(res[0].wins)
-                setLosses(res[0].losses)
-            })
-    }, [])
+        })
+        .then(response => response.json())
+        .then(res => {
+            setUser(res[0].username)
+            setWins(res[0].wins)
+            setLosses(res[0].losses)
+        });
+    }, []);
 
     return (
         <div>

@@ -1,6 +1,6 @@
-import React, { useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import cookieParser from '../cookieParser.js';
+import React, { useEffect } from 'react'
+import { Link, useNavigate } from 'react-router-dom'
+import cookieParser from '../cookieParser.js'
 
 export function Menu() {
 
@@ -9,14 +9,14 @@ export function Menu() {
     // rederict to login if youre not logged in
     useEffect(() => {
         if (cookieParser(document.cookie).user == "") {
-            navigate("/log-in")
+            navigate("/log-in");
         }
-    }, [document.cookie])
+    }, [document.cookie]);
 
     const logout = () => {
-        document.cookie = "username="
-        document.cookie = "pass="
-        navigate("/log-in")
+        document.cookie = "username=";
+        document.cookie = "pass=";
+        navigate("/log-in");
     }
     
     return (

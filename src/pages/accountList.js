@@ -1,27 +1,36 @@
-import React from "react";
-import { useEffect } from "react";
-import { useState } from "react";
-import axios from "axios";
+import React, { useEffect, useState } from "react"
 
 export function AccountList() {
 
     const [accounts, setAccounts] = useState([]);
+    const controller = new AbortController()
+
+    const fetchAllAccounts = async () => {
+        try {
+            let header = {
+                "Content-Type": "application/json"
+            }
+            let request = await fetch('http://localhost:8008/fetch-accounts', {
+                method: 'GET',
+                headers: header,
+                signal: controller.signal
+            })
+            .then(response => response.json())
+            .then(res => {
+                setAccounts(res);
+            });
+            controller.abort();
+            return request;
+        } catch (err) {
+            console.log(err);
+        }
+    };
 
     useEffect(() => {
-        const fetchAllAccounts = async () => {
-            try {
-                const res = await axios({
-                    method:'get',
-                    url:'http://localhost:8008/fetch-accounts'
-                })
-                console.log(res.data)
-                setAccounts(res.data);
-            } catch (err) {
-                console.log(err);
-            }
-        };
+        console.log("starting this thing");
         fetchAllAccounts();
-    }, accounts);
+        console.log("finished this thing");
+    }, []);
 
     console.log(accounts);
 
